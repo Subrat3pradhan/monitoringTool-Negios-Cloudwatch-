@@ -1,0 +1,77 @@
+yum install -y httpd httpd-tools php gcc glibc glibc-common gd gd-devel make net-snmp
+useradd nagios
+groupadd nagcmd
+usermod -G nagcmd nagios
+usermod -G nagcmd apache
+mkdir /root/nagios
+cd /root/nagios
+wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.3.4.tar.gz
+wget https://nagios-plugins.org/download/nagios-plugins-2.2.1.tar.gz
+tar -xvf nagios-4.3.4.tar.gz
+tar -xvf nagios-plugins-2.2.1.tar.gz
+ls -l
+cd nagios-4.3.4/
+./configure --with-command-group=nagcmd
+make all
+make install
+make install-init
+make install-commandmode
+make install-config
+make install-webconf
+htpasswd -s -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+service httpd start
+systemctl start httpd.service
+cd /root/nagios
+cd nagios-plugins-2.2.1/
+./configure --with-nagios-user=nagios --with-nagios-group=nagios
+make
+make install
+/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+chkconfig --add nagios
+chkconfig --level 35 nagios on
+chkconfig --add httpd
+systemctl enable nagios	
+systemctl enable httpd
+service nagios start
+systemctl start nagios.service
+------------------------------------------------
+Login in browser--PublicDNS/nagios
+PublicDNS/nagios
+user name- nagiosadmin
+password- which you set (ex 123)
+
+
+main configuration file
+/usr/local/nagios/etc/nagios.cfg
+
+
+/usr/local/nagios/etc/objects/localhost.cfg (hosts information)
+/usr/local/nagios/etc/objects/contacts.cfg (whom to be informed)
+/usr/local/nagios/etc/objects/timeperiods.cfg (at what time to monitor)
+/usr/local/nagios/etc/objects/commands.cfg (plugins to use)
+/usr/local/nagios/etc/objects/templates.cfg (templates)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
